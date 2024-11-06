@@ -12,7 +12,7 @@
     <!-- Advent Calendar Grid -->
     <div class="grid grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-6 max-w-7xl mx-auto mt-12 px-4">
       <div v-for="day in 24" :key="day" class="relative group cursor-pointer transition-transform transform hover:scale-105">
-        <div class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative" @mouseover="hoverEffect(day)">
+        <div class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative">
           <!-- Number -->
           <div class="absolute inset-0 flex items-center justify-center text-5xl font-bold text-white">
             {{ day }}
@@ -22,6 +22,8 @@
         <div
           class="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 to-red-400 opacity-0 group-hover:opacity-100"
           style="filter: blur(5px)"
+          @mouseover="hoverEffect(day)"
+          @click="openDoorEffect(day)"
         ></div>
       </div>
     </div>
@@ -52,10 +54,14 @@ export default {
     });
 
     const hoverEffect = (day) => {
-      // console.log(`Hovered over day ${day}!`);
+      //console.log(`Hovered over day ${day}!`);
     };
 
-    return { hoverEffect };
+    const openDoorEffect = (day) => {
+      console.log(`Opened door for day ${day}!`);
+    };
+
+    return { hoverEffect, openDoorEffect };
   },
 };
 </script>
