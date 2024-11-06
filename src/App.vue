@@ -14,7 +14,7 @@
       <div v-for="day in 24" :key="day" class="relative group cursor-pointer transition-transform transform hover:scale-105">
         <div
           class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative"
-          :class="{ 'bg-blue-400': doorOpened && openedDoors.some((door) => door.day === day) }"
+          :class="{ 'bg-gradient-to-tl from-blue-800 to-green-800 ': doorOpened && openedDoors.some((door) => door.day === day) }"
         >
           <!-- Number -->
           <div
@@ -49,10 +49,11 @@ import adventPrizes from "./utils/adventPrizes";
 const snowflakeCount = `${Math.floor(Math.random() * 100) + 10}`;
 
 const generateSnowflakes = () => {
+  console.log(`generating snowflakes.....  `);
   const snowContainer = document.getElementById("snow");
   for (let i = 0; i < snowflakeCount; i++) {
     const snowflake = document.createElement("div");
-    //const snowflakeSize = `${Math.floor(Math.random() * 20)}`;
+    snowflake.classList.add("snowflake");
     snowflake.style.left = `${Math.random() * 100}%`;
     snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
     snowflake.style.animationDelay = `${Math.random() * 5}s`;
@@ -60,6 +61,7 @@ const generateSnowflakes = () => {
   }
 };
 
+// generate snowflakes
 onMounted(() => {
   generateSnowflakes();
 });
@@ -70,12 +72,16 @@ const hoverEffect = (day) => {
 
 const doorOpened = ref(false);
 const openedDoors = ref([]);
+
+const toggleDoor = () => {
+  doorOpened.value = !doorOpened.value;
+};
 const openDoorEffect = (day) => {
   //console.log(`Opened door for day ${day}!`);
   const prize = adventPrizes[day - 1];
   if (prize) {
     //alert(prize.name + ": " + prize.description);
-    doorOpened.value = true;
+    toggleDoor();
     //console.log(`post-Click Door Status: ${doorOpened.value}`);
     const prizeName = prize.name;
     const prizeDescription = prize.description;
