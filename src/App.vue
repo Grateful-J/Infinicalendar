@@ -33,7 +33,7 @@ import { ref, onMounted } from "vue";
 
 export default {
   setup() {
-    const snowflakeCount = 100;
+    const snowflakeCount = `${Math.floor(Math.random() * 100) + 10}`;
 
     const generateSnowflakes = () => {
       const snowContainer = document.getElementById("snow");
