@@ -32,6 +32,7 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import adventPrizes from "./utils/adventPrizes";
 
 export default {
   setup() {
@@ -59,6 +60,10 @@ export default {
 
     const openDoorEffect = (day) => {
       console.log(`Opened door for day ${day}!`);
+      const prize = adventPrizes[day - 1];
+      if (prize) {
+        alert(prize.name + ": " + prize.description);
+      }
     };
 
     return { hoverEffect, openDoorEffect };
