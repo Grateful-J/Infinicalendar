@@ -12,11 +12,16 @@
     <!-- Advent Calendar Grid -->
     <div class="grid grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-6 max-w-7xl mx-auto mt-12 px-4">
       <div v-for="day in 24" :key="day" class="relative group cursor-pointer transition-transform transform hover:scale-105">
-        <div class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative">
+        <div
+          class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative"
+          :class="{ 'bg-green-800': doorOpened && openedDoors.includes(day) }"
+        >
           <!-- Number -->
           <div class="absolute inset-0 flex items-center justify-center text-5xl font-bold text-white">
             {{ day }}
           </div>
+
+          <!-- Card Info-->
         </div>
         <!-- Glow Effect -->
         <div
@@ -30,43 +35,47 @@
   </div>
 </template>
 
-<script>
-import { ref, onMounted } from "vue";
+<script setup lang="ts" name="App">
+import { ref, onMounted, computed } from "vue";
 import adventPrizes from "./utils/adventPrizes";
 
-export default {
-  setup() {
-    const snowflakeCount = `${Math.floor(Math.random() * 100) + 10}`;
+const snowflakeCount = `${Math.floor(Math.random() * 100) + 10}`;
 
-    const generateSnowflakes = () => {
-      const snowContainer = document.getElementById("snow");
-      for (let i = 0; i < snowflakeCount; i++) {
-        const snowflake = document.createElement("div");
-        snowflake.classList.add("snowflake");
-        snowflake.style.left = `${Math.random() * 100}%`;
-        snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
-        snowflake.style.animationDelay = `${Math.random() * 5}s`;
-        snowContainer.appendChild(snowflake);
-      }
-    };
+const generateSnowflakes = () => {
+  const snowContainer = document.getElementById("snow");
+  for (let i = 0; i < snowflakeCount; i++) {
+    const snowflake = document.createElement("div");
+    //const snowflakeSize = `${Math.floor(Math.random() * 20)}`;
+    snowflake.style.left = `${Math.random() * 100}%`;
+    snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
+    snowflake.style.animationDelay = `${Math.random() * 5}s`;
+    snowContainer.appendChild(snowflake);
+  }
+};
 
-    onMounted(() => {
-      generateSnowflakes();
-    });
+onMounted(() => {
+  generateSnowflakes();
+});
 
-    const hoverEffect = (day) => {
-      //console.log(`Hovered over day ${day}!`);
-    };
+const hoverEffect = (day) => {
+  //console.log(`Hovered over day ${day}!`);
+};
 
-    const openDoorEffect = (day) => {
-      console.log(`Opened door for day ${day}!`);
-      const prize = adventPrizes[day - 1];
-      if (prize) {
-        alert(prize.name + ": " + prize.description);
-      }
-    };
+const doorOpened = ref(false);
+const openedDoors = ref([]);
+const openDoorEffect = (day) => {
+  //console.log(`Opened door for day ${day}!`);
+  const prize = adventPrizes[day - 1];
+  if (prize) {
+    alert(prize.name + ": " + prize.description);
+    doorOpened.value = true;
+    console.log(`post-Click Door Status: ${doorOpened.value}`);
+    const prizeName = prize.name;
+    const prizeDescription = prize.description;
+    console.log(day);
+    openedDoors.value.push(day);
 
-    return { hoverEffect, openDoorEffect };
-  },
+    return prizeName, prizeDescription;
+  }
 };
 </script>
