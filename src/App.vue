@@ -14,14 +14,21 @@
       <div v-for="day in 24" :key="day" class="relative group cursor-pointer transition-transform transform hover:scale-105">
         <div
           class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative"
-          :class="{ 'bg-green-800': doorOpened && openedDoors.includes(day) }"
+          :class="{ 'bg-green-800': doorOpened && openedDoors.some((door) => door.day === day) }"
         >
           <!-- Number -->
-          <div class="absolute inset-0 flex items-center justify-center text-5xl font-bold text-white">
+          <div
+            class="absolute inset-0 flex items-center justify-center text-5xl font-bold text-white"
+            v-show="!openedDoors.some((door) => door.day === day)"
+          >
             {{ day }}
           </div>
 
-          <!-- Card Info-->
+          <!-- Displays Card Info-->
+          <div class="absolute inset-0 flex items-center justify-center text-2xl font-bold text-white">
+            <span v-show="doorOpened"> {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span>
+            <span v-show="doorOpened"> {{ openedDoors.find((door) => door.day === day)?.prizeDescription }}</span>
+          </div>
         </div>
         <!-- Glow Effect -->
         <div
@@ -67,13 +74,14 @@ const openDoorEffect = (day) => {
   //console.log(`Opened door for day ${day}!`);
   const prize = adventPrizes[day - 1];
   if (prize) {
-    alert(prize.name + ": " + prize.description);
+    //alert(prize.name + ": " + prize.description);
     doorOpened.value = true;
-    console.log(`post-Click Door Status: ${doorOpened.value}`);
+    //console.log(`post-Click Door Status: ${doorOpened.value}`);
     const prizeName = prize.name;
     const prizeDescription = prize.description;
     console.log(day);
-    openedDoors.value.push(day);
+    openedDoors.value.push({ day, prizeName, prizeDescription });
+    console.log(openedDoors.value);
 
     return prizeName, prizeDescription;
   }
