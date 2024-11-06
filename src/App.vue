@@ -14,7 +14,7 @@
       <div v-for="day in 24" :key="day" class="relative group cursor-pointer transition-transform transform hover:scale-105">
         <div
           class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative"
-          :class="{ 'bg-green-800': doorOpened && openedDoors.some((door) => door.day === day) }"
+          :class="{ 'bg-blue-400': doorOpened && openedDoors.some((door) => door.day === day) }"
         >
           <!-- Number -->
           <div
@@ -25,9 +25,9 @@
           </div>
 
           <!-- Displays Card Info-->
-          <div class="absolute inset-0 flex items-center justify-center text-2xl font-bold text-white">
-            <span v-show="doorOpened"> {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span>
-            <span v-show="doorOpened"> {{ openedDoors.find((door) => door.day === day)?.prizeDescription }}</span>
+          <div class="absolute inset-0 flex flex-col items-center justify-between font-bold text-white">
+            <span v-show="doorOpened" class="text-2xl"> {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span>
+            <span v-show="doorOpened" class="text-xl"> {{ openedDoors.find((door) => door.day === day)?.prizeDescription }}</span>
           </div>
         </div>
         <!-- Glow Effect -->
