@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Glow Effect */
+@layer utilities {
+  .glow {
+    text-shadow: 0 0 10px #ffffff, 0 0 20px #ffbf00, 0 0 30px #ffd700;
+  }
+}
+
+/* Snowflakes */
+.snowflake {
+  position: absolute;
+  top: -10%;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-10%) translateX(0);
+  }
+  100% {
+    transform: translateY(110vh) translateX(20px);
+  }
+}
+
+/* Door Animation */
+.door {
+  height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.5s ease-in-out;
+  transform: perspective(800px) rotateY(0deg);
+  transform-origin: center;
+}
+
+.door:hover {
+  transform: perspective(800px) rotateY(-160deg);
+}
