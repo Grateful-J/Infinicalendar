@@ -14,7 +14,10 @@
       <div v-for="day in 24" :key="day" class="relative group cursor-pointer transition-transform transform hover:scale-105">
         <div
           class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative"
-          :class="{ 'bg-gradient-to-tl from-blue-800 to-green-800 ': doorOpened && openedDoors.some((door) => door.day === day) }"
+          :class="{
+            'bg-gradient-to-tl from-blue-800 to-green-800 ':
+              doorOpened && openedDoors.some((door) => door.day === day) && openedDoors.find((door) => door.day === day)?.doorStatus === true,
+          }"
         >
           <!-- Number -->
           <div
@@ -28,6 +31,8 @@
           <div class="absolute inset-0 flex flex-col items-center justify-between font-bold text-white">
             <span v-show="doorOpened" class="text-2xl"> {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span>
             <span v-show="doorOpened" class="text-xl"> {{ openedDoors.find((door) => door.day === day)?.prizeDescription }}</span>
+            <span v-show="doorOpened" class="text-lg"> {{ openedDoors.find((door) => door.day === day)?.prizeURL }}</span>
+            <span v-show="doorOpened" class="text-lg"> {{ openedDoors.find((door) => door.day === day)?.doorStatus }}</span>
           </div>
         </div>
         <!-- Glow Effect -->
@@ -73,21 +78,32 @@ const hoverEffect = (day) => {
 const doorOpened = ref(false);
 const openedDoors = ref([]);
 
-const toggleDoor = () => {
-  doorOpened.value = !doorOpened.value;
+const toggleDoor = (day) => {
+  //doorOpened.value = !doorOpened.value;
+  const door = openedDoors.value.find((door) => door.day === day);
+  door.doorStatus = !door.doorStatus;
+
+  openedDoors.value.find((door) => door.doorStatus === true) ? (doorOpened.value = true) : (doorOpened.value = false);
+  console.log(`The Door is ${door}`);
+  console.log(`The Door Status is: ${door.doorStatus}`);
 };
 const openDoorEffect = (day) => {
   //console.log(`Opened door for day ${day}!`);
   const prize = adventPrizes[day - 1];
   if (prize) {
-    //alert(prize.name + ": " + prize.description);
-    toggleDoor();
     //console.log(`post-Click Door Status: ${doorOpened.value}`);
     const prizeName = prize.name;
     const prizeDescription = prize.description;
+    const prizeImage = prize.image;
+    const prizeJson = prize.json;
+    let doorStatus = false;
+    const prizeURL = prize.url;
     console.log(day);
-    openedDoors.value.push({ day, prizeName, prizeDescription });
+    openedDoors.value.push({ day, prizeName, prizeDescription, prizeImage, prizeJson, prizeURL, doorStatus });
     console.log(openedDoors.value);
+
+    //alert(prize.name + ": " + prize.description);
+    toggleDoor(day);
 
     return prizeName, prizeDescription;
   }

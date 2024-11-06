@@ -3,7 +3,7 @@ const adventPrizes = [
     id: 1,
     name: "Cats in Hats Calendar",
     description: "Every month features a new grumpy cat wearing an increasingly ridiculous hat.",
-    url: "",
+    url: "www.google.com",
     json: "",
     image: "",
   },
