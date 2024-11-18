@@ -21,6 +21,15 @@
   animation: fall linear infinite;
 }
 
+.snakeflake {
+  position: absolute;
+  top: -10%;
+  width: 40px;
+  height: 40px;
+  opacity: 0.8;
+  animation: fall linear infinite;
+}
+
 @keyframes fall {
   0% {
     transform: translateY(-10%) translateX(0);

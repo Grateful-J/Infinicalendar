@@ -2,6 +2,7 @@
   <div class="relative min-h-screen bg-gradient-to-b from-blue-900 to-gray-900">
     <!-- Snowfall -->
     <div class="absolute inset-0 pointer-events-none" id="snow"></div>
+    <div class="absolute inset-0 pointer-events-none" id="snake"></div>
 
     <!-- Header -->
     <div class="text-center py-10">
@@ -16,7 +17,7 @@
           class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative"
           :class="{
             'bg-gradient-to-tl from-blue-800 to-green-800 ':
-              doorOpened && openedDoors.some((door) => door.day === day) && openedDoors.find((door) => door.day === day)?.doorStatus === true,
+              openedDoors.some((door) => door.day === day) && openedDoors.find((door) => door.day === day)?.doorStatus === true,
           }"
         >
           <!-- Number -->
@@ -29,7 +30,7 @@
 
           <!-- Displays Card Info-->
           <div class="absolute inset-0 flex flex-col items-center justify-between font-bold text-white">
-            <span v-show="doorOpened && openedDoors.some((door) => door.day === day)" class="text-2xl">
+            <span v-show="openedDoors.some((door) => door.day === day)" class="text-2xl">
               {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span
             >
             <span v-show="doorOpened" class="text-xl"> {{ openedDoors.find((door) => door.day === day)?.prizeDescription }}</span>
@@ -58,13 +59,26 @@ const snowflakeCount = `${Math.floor(Math.random() * 100) + 10}`;
 const generateSnowflakes = () => {
   console.log(`generating snowflakes.....  `);
   const snowContainer = document.getElementById("snow");
+  const snakeFlakeContainer = document.getElementById("snake");
   for (let i = 0; i < snowflakeCount; i++) {
     const snowflake = document.createElement("div");
+
     snowflake.classList.add("snowflake");
+    // add snowflake emoji
+    snowflake.innerHTML = "❄️";
     snowflake.style.left = `${Math.random() * 100}%`;
     snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
     snowflake.style.animationDelay = `${Math.random() * 5}s`;
     snowContainer.appendChild(snowflake);
+
+    const snakeflake = document.createElement("div");
+    snakeflake.classList.add("snakeflake");
+    snakeflake.innerHTML = "🐍";
+    snakeflake.classList.add("text-4xl");
+    snakeflake.style.left = `${Math.random() * 100}%`;
+    snakeflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
+    snakeflake.style.animationDelay = `${Math.random() * 5}s`;
+    snakeFlakeContainer.appendChild(snakeflake);
   }
 };
 
