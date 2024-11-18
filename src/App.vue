@@ -1,8 +1,8 @@
 <template>
   <div class="relative min-h-screen bg-gradient-to-b from-blue-900 to-gray-900">
     <!-- Snowfall -->
-    <div class="absolute inset-0 pointer-events-none" id="snow"></div>
-    <div class="absolute inset-0 pointer-events-none" id="snake"></div>
+    <div v-show="!snakeyDon" class="absolute inset-0 pointer-events-none" id="snow"></div>
+    <div v-show="snakeyDon" class="absolute inset-0 pointer-events-none" id="snake"></div>
 
     <!-- Header -->
     <div class="text-center py-10">
@@ -69,6 +69,7 @@ const generateSnowflakes = () => {
     snowflake.style.left = `${Math.random() * 100}%`;
     snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
     snowflake.style.animationDelay = `${Math.random() * 5}s`;
+    snowflake.classList.add("text-3xl");
     snowContainer.appendChild(snowflake);
 
     const snakeflake = document.createElement("div");
@@ -78,6 +79,10 @@ const generateSnowflakes = () => {
     snakeflake.style.left = `${Math.random() * 100}%`;
     snakeflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
     snakeflake.style.animationDelay = `${Math.random() * 5}s`;
+    //flip snake across y axis
+    const snakeDirection = Math.random() < 0.5 ? "left" : "right";
+    console.log(snakeDirection);
+    //transform: 'scaleX(-1)' if direction is right
     snakeFlakeContainer.appendChild(snakeflake);
   }
 };
@@ -96,6 +101,8 @@ const openedDoors = ref([]);
 const dateLocked = ref(false); // used in dev to toggle if doors can open if date is later than today
 const date = ref(new Date().getDate()); // formatted to only show day of month
 console.log(`date is: ${date.value}`);
+
+const snakeyDon = ref(true);
 
 const toggleDoor = (day) => {
   //doorOpened.value = !doorOpened.value;
