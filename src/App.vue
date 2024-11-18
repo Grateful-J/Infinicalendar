@@ -29,7 +29,9 @@
 
           <!-- Displays Card Info-->
           <div class="absolute inset-0 flex flex-col items-center justify-between font-bold text-white">
-            <span v-show="doorOpened" class="text-2xl"> {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span>
+            <span v-show="doorOpened && openedDoors.some((door) => door.day === day)" class="text-2xl">
+              {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span
+            >
             <span v-show="doorOpened" class="text-xl"> {{ openedDoors.find((door) => door.day === day)?.prizeDescription }}</span>
             <span v-show="doorOpened" class="text-lg"> {{ openedDoors.find((door) => door.day === day)?.prizeURL }}</span>
             <span v-show="doorOpened" class="text-lg"> {{ openedDoors.find((door) => door.day === day)?.doorStatus }}</span>
@@ -77,6 +79,9 @@ const hoverEffect = (day) => {
 
 const doorOpened = ref(false);
 const openedDoors = ref([]);
+const dateLocked = ref(false); // used in dev to toggle if doors can open if date is later than today
+const date = ref(new Date().getDate()); // formatted to only show day of month
+console.log(`date is: ${date.value}`);
 
 const toggleDoor = (day) => {
   //doorOpened.value = !doorOpened.value;
@@ -84,8 +89,8 @@ const toggleDoor = (day) => {
   door.doorStatus = !door.doorStatus;
 
   openedDoors.value.find((door) => door.doorStatus === true) ? (doorOpened.value = true) : (doorOpened.value = false);
-  console.log(`The Door is ${door}`);
-  console.log(`The Door Status is: ${door.doorStatus}`);
+  console.log(`The Door is ${door.day}`);
+  console.log(`The Door Status is: ${door.doorStatus ? "OPEN" : "CLOSED"}`);
 };
 const openDoorEffect = (day) => {
   //console.log(`Opened door for day ${day}!`);
@@ -103,7 +108,12 @@ const openDoorEffect = (day) => {
     console.log(openedDoors.value);
 
     //alert(prize.name + ": " + prize.description);
-    toggleDoor(day);
+    //toggleDoor(day);
+
+    // Checks to see if date is later than today
+    if (day <= date.value) {
+      toggleDoor(day);
+    } else alert("Door is locked! Come back tomorrow");
 
     return prizeName, prizeDescription;
   }
