@@ -10,6 +10,16 @@
       <p class="mt-4 text-lg text-gray-200 font-medium">Unlock the calendars of the season, one day at a time!</p>
     </div>
 
+    <Card>
+      <template #title>Simple Card</template>
+      <template #content>
+        <p class="m-0">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat
+          libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!
+        </p>
+      </template>
+    </Card>
+
     <!-- Advent Calendar Grid -->
     <div class="grid grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-6 max-w-7xl mx-auto mt-12 px-4">
       <div v-for="day in 24" :key="day" class="relative group cursor-pointer transition-transform transform hover:scale-105">
