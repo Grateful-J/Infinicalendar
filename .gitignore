@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 
 *secretCals.ts
+
+*primevue
