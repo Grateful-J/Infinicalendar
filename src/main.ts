@@ -1,16 +1,15 @@
 import { createApp } from "vue";
 import "./style.css";
-import App from "./App.vue";
+
 import PrimeVue from "primevue/config";
-import Card from "primevue/card";
 import "primeicons/primeicons.css";
 
-createApp(App).mount("#app");
-/* App.use(PrimeVue);
-App.use(Card);
- */
+import App from "./App.vue";
 
-App.use(PrimeVue, {
+const app = createApp(App);
+
+app.use(PrimeVue, {
   theme: "none",
 });
-App.use(Card);
+
+app.mount("#app");
