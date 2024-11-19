@@ -53,6 +53,7 @@
 <script setup lang="ts" name="App">
 import { ref, onMounted, computed } from "vue";
 import adventPrizes from "./utils/adventPrizes";
+import Card from "primevue/card";
 
 const snowflakeCount = `${Math.floor(Math.random() * 100) + 10}`;
 
@@ -102,7 +103,8 @@ const dateLocked = ref(false); // used in dev to toggle if doors can open if dat
 const date = ref(new Date().getDate()); // formatted to only show day of month
 console.log(`date is: ${date.value}`);
 
-const snakeyDon = ref(true);
+// Trigger on Snakey Don Calender
+const snakeyDon = ref(false);
 
 const toggleDoor = (day) => {
   //doorOpened.value = !doorOpened.value;
