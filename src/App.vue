@@ -4,31 +4,28 @@
     <div v-show="!snakeyDon" class="absolute inset-0 pointer-events-none" id="snow"></div>
     <div v-show="snakeyDon" class="absolute inset-0 pointer-events-none" id="snake"></div>
 
+    <!-- CalendarCard -->
+
+    <!--     <div class="grid grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-6 max-w-7xl mx-auto mt-12 px-4">
+      <CalendarCard
+        v-for="day in 24"
+        :key="day"
+        :day="day"
+        :openedDoors="openedDoors"
+        :doorOpened="doorOpened"
+        :dateLocked="dateLocked"
+        @hoverEffect="hoverEffect"
+        @openDoorEffect="openDoorEffect"
+        @toggleDoor="toggleDoor"
+        :cardTitle="cardTitle"
+      />
+    </div>
+ -->
     <!-- Header -->
     <div class="text-center py-10">
       <h1 class="text-6xl font-extrabold text-yellow-300 drop-shadow-md glow">Christmas Advent Calendar</h1>
       <p class="mt-4 text-lg text-gray-200 font-medium">Unlock the calendars of the season, one day at a time!</p>
     </div>
-
-    <Card style="width: 25rem; overflow: hidden">
-      <template #header>
-        <img alt="user header" src="./assets/images/holidayVeg.webp" />
-      </template>
-      <template #title>Advanced Card</template>
-      <template #subtitle>Card subtitle</template>
-      <template #content>
-        <p class="m-0">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat
-          libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque quas!
-        </p>
-      </template>
-      <template #footer>
-        <div class="flex gap-4 mt-1">
-          <Button label="Cancel" severity="secondary" outlined class="w-full" />
-          <Button label="Save" class="w-full" />
-        </div>
-      </template>
-    </Card>
 
     <!-- Advent Calendar Grid -->
     <div class="grid grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-6 max-w-7xl mx-auto mt-12 px-4">
@@ -43,14 +40,14 @@
           <!-- Number -->
           <div
             class="absolute inset-0 flex items-center justify-center text-5xl font-bold text-white"
-            v-show="!openedDoors.some((door) => door.day === day)"
+            v-show="!openedDoors.some((door) => door.day === day && door.doorStatus === true)"
           >
             {{ day }}
           </div>
 
           <!-- Displays Card Info-->
           <div class="absolute inset-0 flex flex-col items-center justify-between font-bold text-white">
-            <span v-show="openedDoors.some((door) => door.day === day)" class="text-2xl">
+            <span v-show="openedDoors.some((door) => door.day === day && door.doorStatus === true)" class="text-2xl">
               {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span
             >
             <span v-show="doorOpened" class="text-xl"> {{ openedDoors.find((door) => door.day === day)?.prizeDescription }}</span>
@@ -73,7 +70,8 @@
 <script setup lang="ts" name="App">
 import { ref, onMounted, computed } from "vue";
 import adventPrizes from "./utils/adventPrizes";
-import Card from "primevue/card";
+
+// import CalendarCard from "./components/CalendarCard.vue";
 
 const snowflakeCount = `${Math.floor(Math.random() * 100) + 10}`;
 
@@ -129,6 +127,11 @@ const snakeyDon = ref(false);
 const toggleDoor = (day) => {
   //doorOpened.value = !doorOpened.value;
   const door = openedDoors.value.find((door) => door.day === day);
+
+  if (!door) {
+    console.warn(`Door ${day} not found in openedDoors.`);
+    return;
+  }
   door.doorStatus = !door.doorStatus;
 
   openedDoors.value.find((door) => door.doorStatus === true) ? (doorOpened.value = true) : (doorOpened.value = false);
@@ -161,4 +164,11 @@ const openDoorEffect = (day) => {
     return prizeName, prizeDescription;
   }
 };
+
+const cardTitle = ref("Card Titlezzzzzzz");
+const cardSubtitle = ref("Card Subtitle");
+const cardContent = ref("Card Content");
+const cardImage = ref("Card Image");
+
+cardImage.value = "../assets/images/holidayVeg.webp";
 </script>
