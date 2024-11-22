@@ -125,18 +125,20 @@ console.log(`date is: ${date.value}`);
 const snakeyDon = ref(false);
 
 const toggleDoor = (day) => {
-  //doorOpened.value = !doorOpened.value;
-  const door = openedDoors.value.find((door) => door.day === day);
+  const doorIndex = openedDoors.value.findIndex((door) => door.day === day);
 
-  if (!door) {
+  if (doorIndex !== -1) {
+    const door = openedDoors.value[doorIndex];
+    if (door.doorStatus) {
+      //console.log(`Closing Door ${day}`);
+      openedDoors.value.splice(doorIndex, 1);
+    } else {
+      //console.log(`Opening Door ${day}`);
+      door.doorStatus = true;
+    }
+  } else {
     console.warn(`Door ${day} not found in openedDoors.`);
-    return;
   }
-  door.doorStatus = !door.doorStatus;
-
-  openedDoors.value.find((door) => door.doorStatus === true) ? (doorOpened.value = true) : (doorOpened.value = false);
-  console.log(`The Door is ${door.day}`);
-  console.log(`The Door Status is: ${door.doorStatus ? "OPEN" : "CLOSED"}`);
 };
 const openDoorEffect = (day) => {
   //console.log(`Opened door for day ${day}!`);
