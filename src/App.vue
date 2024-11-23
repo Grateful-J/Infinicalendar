@@ -46,22 +46,26 @@
           </div>
 
           <!-- Displays Card Info-->
+
           <div class="absolute inset-0 flex flex-col items-center justify-between font-bold text-white">
-            <span v-show="openedDoors.some((door) => door.day === day && door.doorStatus === true)" class="text-2xl">
-              {{ openedDoors.find((door) => door.day === day)?.prizeName }}</span
-            >
-            <span v-show="doorOpened" class="text-xl"> {{ openedDoors.find((door) => door.day === day)?.prizeDescription }}</span>
-            <span v-show="doorOpened" class="text-lg"> {{ openedDoors.find((door) => door.day === day)?.prizeURL }}</span>
-            <span v-show="doorOpened" class="text-lg"> {{ openedDoors.find((door) => door.day === day)?.doorStatus }}</span>
+            <span v-show="currentDoorForDay(day)?.doorStatus" class="text-2xl">
+              {{ currentDoorForDay(day)?.prizeName }}
+            </span>
+            <span v-show="currentDoorForDay(day)?.doorStatus" class="text-xl">
+              {{ currentDoorForDay(day)?.prizeDescription }}
+            </span>
+            <span v-show="doorOpened" class="text-lg">{{ currentDoorForDay(day)?.prizeURL }}</span>
+            <span v-show="doorOpened" class="text-lg">{{ currentDoorForDay(day)?.doorStatus }}</span>
           </div>
+
+          <!-- Glow Effect -->
+          <div
+            class="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 to-red-400 opacity-0 group-hover:opacity-100"
+            style="filter: blur(5px)"
+            @mouseover="hoverEffect(day)"
+            @click="openDoorEffect(day)"
+          ></div>
         </div>
-        <!-- Glow Effect -->
-        <div
-          class="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 to-red-400 opacity-0 group-hover:opacity-100"
-          style="filter: blur(5px)"
-          @mouseover="hoverEffect(day)"
-          @click="openDoorEffect(day)"
-        ></div>
       </div>
     </div>
   </div>
@@ -115,11 +119,13 @@ const hoverEffect = (day) => {
   //console.log(`Hovered over day ${day}!`);
 };
 
-const doorOpened = ref(false);
+// const doorOpened = ref(false);
 const openedDoors = ref([]);
-const dateLocked = ref(false); // used in dev to toggle if doors can open if date is later than today
+const currentDoor = computed(() => openedDoors.value.find((door) => door.day === day.value));
+const currentDoorForDay = (dayNum: number) => {
+  return openedDoors.value.find((door) => door.day === dayNum);
+};
 const date = ref(new Date().getDate()); // formatted to only show day of month
-console.log(`date is: ${date.value}`);
 
 // Trigger on Snakey Don Calender
 const snakeyDon = ref(false);
