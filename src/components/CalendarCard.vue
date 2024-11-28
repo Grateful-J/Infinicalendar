@@ -1,7 +1,7 @@
 <template>
   <Card class="calendar-card">
     <template #header>
-      <img :src="getImageUrl()" alt="calendar image" class="w-full h-32 object-cover" />
+      <img :src="getImageUrl()" alt="calendar image" class="w-full h-24 object-cover" />
     </template>
     <template #title>
       <div class="text-lg font-display">{{ cardTitle }}</div>
@@ -67,19 +67,20 @@ const getImageUrl = () => {
 }
 
 :deep(.p-card-title) {
-  color: #2c3e50;
+  color: white;
   font-family: "Montserrat", sans-serif;
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem !important;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem !important;
+  text-align: center;
 }
 
 .subtitle-container {
-  padding: 0.5rem;
-  font-size: 0.9rem;
-  color: #34495e;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding: 0.25rem;
+  font-size: 1rem;
+  color: white;
+  white-space: start;
+  overflow: auto;
+  text-overflow: inherit;
   font-family: "Montserrat", sans-serif;
 }
 
@@ -95,7 +96,7 @@ const getImageUrl = () => {
 
 .description-text {
   font-family: "Montserrat", sans-serif;
-  color: #2c3e50;
+  color: white;
   font-size: 0.9rem;
   line-height: 1.4;
 }
