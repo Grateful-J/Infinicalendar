@@ -1,69 +1,45 @@
 <template>
-  <div class="relative min-h-screen bg-gradient-to-b from-blue-900 to-gray-900">
-    <!-- Snowfall -->
-    <div v-show="!snakeyDon" class="absolute inset-0 pointer-events-none" id="snow"></div>
-    <div v-show="snakeyDon" class="absolute inset-0 pointer-events-none" id="snake"></div>
-
-    <!-- CalendarCard -->
-
-    <!--     <div class="grid grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-6 max-w-7xl mx-auto mt-12 px-4">
-      <CalendarCard
-        v-for="day in 24"
-        :key="day"
-        :day="day"
-        :openedDoors="openedDoors"
-        :doorOpened="doorOpened"
-        :dateLocked="dateLocked"
-        @hoverEffect="hoverEffect"
-        @openDoorEffect="openDoorEffect"
-        @toggleDoor="toggleDoor"
-        :cardTitle="cardTitle"
-      />
-    </div>
- -->
+  <div class="relative min-h-screen bg-gradient-to-b from-blue-900 to-gray-900 p-8">
     <!-- Header -->
     <div class="text-center py-10">
       <h1 class="text-6xl font-extrabold text-yellow-300 drop-shadow-md glow">Christmas Advent Calendar</h1>
-      <p class="mt-4 text-lg text-gray-200 font-medium">Unlock the calendars of the season, one day at a time!</p>
+      <p class="mt-4 text-lg text-gray-200">Open a new surprise each day!</p>
     </div>
 
-    <!-- Advent Calendar Grid -->
-    <div class="grid grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 gap-6 max-w-7xl mx-auto mt-12 px-4">
-      <div v-for="day in 24" :key="day" class="relative group cursor-pointer transition-transform transform hover:scale-105">
+    <!-- Calendar Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+      <div v-for="day in 24" :key="day" class="relative group">
+        <!-- Gift Box Container -->
         <div
-          class="door bg-red-600 min-h-[150px] rounded-lg shadow-2xl relative"
-          :class="{
-            'bg-gradient-to-tl from-blue-800 to-green-800 ':
-              openedDoors.some((door) => door.day === day) && openedDoors.find((door) => door.day === day)?.doorStatus === true,
-          }"
+          class="door aspect-square bg-red-600 rounded-lg shadow-xl cursor-pointer transform transition-transform duration-500"
+          :class="{ opened: currentDoorForDay(day)?.doorStatus }"
+          @click="openDoorEffect(day)"
         >
-          <!-- Number -->
-          <div
-            class="absolute inset-0 flex items-center justify-center text-5xl font-bold text-white"
-            v-show="!openedDoors.some((door) => door.day === day && door.doorStatus === true)"
-          >
-            {{ day }}
+          <div class="ribbon-horizontal"></div>
+          <div class="bow"></div>
+          <!-- Front of Door (Day Number) -->
+          <div v-show="!currentDoorForDay(day)?.doorStatus" class="absolute inset-0 flex items-center justify-center">
+            <div class="text-5xl font-bold text-white">{{ day }}</div>
+            <!-- Christmas Decoration -->
+            <div class="absolute top-2 left-2 w-8 h-8 border-2 border-gold rounded-full"></div>
+            <div class="absolute bottom-2 right-2 w-8 h-8 border-2 border-gold rounded-full"></div>
           </div>
 
-          <!-- Displays Card Info-->
-
-          <div class="absolute inset-0 flex flex-col items-center justify-between font-bold text-white">
-            <span v-show="currentDoorForDay(day)?.doorStatus" class="text-2xl">
-              {{ currentDoorForDay(day)?.prizeName }}
-            </span>
-            <span v-show="currentDoorForDay(day)?.doorStatus" class="text-xl">
-              {{ currentDoorForDay(day)?.prizeDescription }}
-            </span>
-            <span v-show="doorOpened" class="text-lg">{{ currentDoorForDay(day)?.prizeURL }}</span>
-            <span v-show="doorOpened" class="text-lg">{{ currentDoorForDay(day)?.doorStatus }}</span>
+          <!-- Back of Door (Calendar Card) -->
+          <div v-show="currentDoorForDay(day)?.doorStatus" class="absolute inset-0 backface-hidden">
+            <CalendarCard
+              :day="day"
+              :prize-name="currentDoorForDay(day)?.prizeName"
+              :prize-description="currentDoorForDay(day)?.prizeDescription"
+              :prize-url="currentDoorForDay(day)?.prizeURL"
+              :door-status="currentDoorForDay(day)?.doorStatus || false"
+            />
           </div>
 
-          <!-- Glow Effect -->
+          <!-- Hover Glow Effect -->
           <div
-            class="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 to-red-400 opacity-0 group-hover:opacity-100"
+            class="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 to-red-400 opacity-0 group-hover:opacity-20"
             style="filter: blur(5px)"
-            @mouseover="hoverEffect(day)"
-            @click="openDoorEffect(day)"
           ></div>
         </div>
       </div>
@@ -71,112 +47,119 @@
   </div>
 </template>
 
-<script setup lang="ts" name="App">
-import { ref, onMounted, computed } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
+import CalendarCard from "./components/CalendarCard.vue";
 import adventPrizes from "./utils/adventPrizes";
 
-// import CalendarCard from "./components/CalendarCard.vue";
+// Define the type for door objects
+interface Door {
+  day: number;
+  doorStatus: boolean;
+  prizeName: string;
+  prizeDescription: string;
+  prizeURL?: string;
+}
 
-const snowflakeCount = `${Math.floor(Math.random() * 100) + 10}`;
+// Initialize openedDoors as a ref with the Door type
+const openedDoors = ref<Door[]>([]);
 
-const generateSnowflakes = () => {
-  console.log(`generating snowflakes.....  `);
-  const snowContainer = document.getElementById("snow");
-  const snakeFlakeContainer = document.getElementById("snake");
-  for (let i = 0; i < snowflakeCount; i++) {
-    const snowflake = document.createElement("div");
+// Function to handle door opening
+const openDoorEffect = (day: number) => {
+  const existingDoor = openedDoors.value.find((door) => door.day === day);
+  if (!existingDoor) {
+    // Get random prize from adventPrizes
+    const prize = adventPrizes[Math.floor(Math.random() * adventPrizes.length)];
 
-    snowflake.classList.add("snowflake");
-    // add snowflake emoji
-    snowflake.innerHTML = "❄️";
-    snowflake.style.left = `${Math.random() * 100}%`;
-    snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
-    snowflake.style.animationDelay = `${Math.random() * 5}s`;
-    snowflake.classList.add("text-3xl");
-    snowContainer.appendChild(snowflake);
-
-    const snakeflake = document.createElement("div");
-    snakeflake.classList.add("snakeflake");
-    snakeflake.innerHTML = "🐍";
-    snakeflake.classList.add("text-4xl");
-    snakeflake.style.left = `${Math.random() * 100}%`;
-    snakeflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
-    snakeflake.style.animationDelay = `${Math.random() * 5}s`;
-    //flip snake across y axis
-    const snakeDirection = Math.random() < 0.5 ? "left" : "right";
-    console.log(snakeDirection);
-    //transform: 'scaleX(-1)' if direction is right
-    snakeFlakeContainer.appendChild(snakeflake);
-  }
-};
-
-// generate snowflakes
-onMounted(() => {
-  generateSnowflakes();
-});
-
-const hoverEffect = (day) => {
-  //console.log(`Hovered over day ${day}!`);
-};
-
-// const doorOpened = ref(false);
-const openedDoors = ref([]);
-const currentDoor = computed(() => openedDoors.value.find((door) => door.day === day.value));
-const currentDoorForDay = (dayNum: number) => {
-  return openedDoors.value.find((door) => door.day === dayNum);
-};
-const date = ref(new Date().getDate()); // formatted to only show day of month
-
-// Trigger on Snakey Don Calender
-const snakeyDon = ref(false);
-
-const toggleDoor = (day) => {
-  const doorIndex = openedDoors.value.findIndex((door) => door.day === day);
-
-  if (doorIndex !== -1) {
-    const door = openedDoors.value[doorIndex];
-    if (door.doorStatus) {
-      //console.log(`Closing Door ${day}`);
-      openedDoors.value.splice(doorIndex, 1);
-    } else {
-      //console.log(`Opening Door ${day}`);
-      door.doorStatus = true;
-    }
+    // Add new door to openedDoors
+    openedDoors.value.push({
+      day,
+      doorStatus: true,
+      prizeName: prize.name,
+      prizeDescription: prize.description,
+      prizeURL: prize.url,
+    });
   } else {
-    console.warn(`Door ${day} not found in openedDoors.`);
-  }
-};
-const openDoorEffect = (day) => {
-  //console.log(`Opened door for day ${day}!`);
-  const prize = adventPrizes[day - 1];
-  if (prize) {
-    //console.log(`post-Click Door Status: ${doorOpened.value}`);
-    const prizeName = prize.name;
-    const prizeDescription = prize.description;
-    const prizeImage = prize.image;
-    const prizeJson = prize.json;
-    let doorStatus = false;
-    const prizeURL = prize.url;
-    console.log(day);
-    openedDoors.value.push({ day, prizeName, prizeDescription, prizeImage, prizeJson, prizeURL, doorStatus });
-    console.log(openedDoors.value);
-
-    //alert(prize.name + ": " + prize.description);
-    //toggleDoor(day);
-
-    // Checks to see if date is later than today
-    if (day <= date.value) {
-      toggleDoor(day);
-    } else alert("Door is locked! Come back tomorrow");
-
-    return prizeName, prizeDescription;
+    // Close Door and remove from openedDoors
+    existingDoor.doorStatus = false;
+    openedDoors.value = openedDoors.value.filter((door) => door.day !== day);
   }
 };
 
-const cardTitle = ref("Card Titlezzzzzzz");
-const cardSubtitle = ref("Card Subtitle");
-const cardContent = ref("Card Content");
-const cardImage = ref("Card Image");
-
-cardImage.value = "../assets/images/holidayVeg.webp";
+// Function to get current door info
+const currentDoorForDay = (day: number) => {
+  return openedDoors.value.find((door) => door.day === day);
+};
 </script>
+
+<style scoped>
+.door {
+  width: 200px;
+  height: 300px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease-in-out;
+  background: linear-gradient(45deg, #dc2626, #ef4444);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Present wrapping pattern */
+.door::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 0px, rgba(255, 255, 255, 0.2) 10px, transparent 10px, transparent 20px);
+  border-radius: 8px;
+}
+
+/* Vertical ribbon */
+.door::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Horizontal ribbon */
+.door .ribbon-horizontal {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Bow */
+.door .bow {
+  position: absolute;
+  top: calc(50% - 15px);
+  left: calc(50% - 15px);
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  box-shadow: -20px -10px 0 -8px rgba(255, 255, 255, 0.4), 20px -10px 0 -8px rgba(255, 255, 255, 0.4);
+  z-index: 1;
+}
+
+.door.opened {
+  transform: rotateY(180deg);
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.glow {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+</style>
