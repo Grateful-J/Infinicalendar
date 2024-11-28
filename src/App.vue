@@ -14,8 +14,10 @@
           class="door aspect-square bg-red-600 rounded-lg shadow-xl cursor-pointer transform transition-transform duration-500"
           :class="{ opened: currentDoorForDay(day)?.doorStatus }"
           @click="openDoorEffect(day)"
+          :data-day="day"
         >
           <div class="ribbon-horizontal"></div>
+          <div class="ribbon-vertical"></div>
           <div class="bow"></div>
           <!-- Front of Door (Day Number) -->
           <div v-show="!currentDoorForDay(day)?.doorStatus" class="absolute inset-0 flex items-center justify-center">
@@ -79,6 +81,19 @@ const openDoorEffect = (day: number) => {
       prizeDescription: prize.description,
       prizeURL: prize.url,
     });
+
+    // Remove bow and ribbon elements when door is opened
+    const doorElement = document.querySelector(`[data-day="${day}"]`);
+    if (doorElement) {
+      const bowElement = doorElement.querySelector(".bow");
+      const ribbonElement = doorElement.querySelector(".ribbon-horizontal");
+      //remove vertical door element
+      const verticalDoorElement = doorElement.querySelector(".robbon-vertical");
+
+      if (bowElement) bowElement.remove();
+      if (ribbonElement) ribbonElement.remove();
+      if (verticalDoorElement) verticalDoorElement.remove();
+    }
   } else {
     // Close Door and remove from openedDoors
     existingDoor.doorStatus = false;
@@ -113,8 +128,11 @@ const currentDoorForDay = (day: number) => {
   border-radius: 8px;
 }
 
-/* Vertical ribbon */
-.door::after {
+/* Vertical ribbon 
+//.door::after {
+*/
+
+.door .ribbon-vertical {
   content: "";
   position: absolute;
   top: 0;

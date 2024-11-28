@@ -22,6 +22,7 @@
 
 <script setup lang="ts">
 import Card from "primevue/card";
+//import { onMounted } from "vue";
 
 const props = defineProps<{
   day: number;
@@ -88,7 +89,8 @@ const getImageUrl = () => {
   flex-direction: column;
   gap: 0.75rem;
   height: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
+  color: white;
 }
 
 .description-text {
