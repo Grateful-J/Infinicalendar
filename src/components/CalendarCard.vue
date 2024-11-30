@@ -2,7 +2,7 @@
   <Card class="calendar-card relative">
     <template #header>
       <div class="overflow-hidden">
-        <div class="absolute top-2 right-2 z-20 opacity-75">
+        <div class="absolute top-2 right-2 z-20 opacity-15 hover:opacity-100 transition-opacity duration-300 ease-in-out">
           <ToggleButton
             v-model="isLockedLocal"
             onIcon="pi pi-lock"
@@ -19,28 +19,19 @@
       <div class="text-lg font-display">{{ prizeName }}</div>
     </template>
     <template #content>
-      <ScrollPanel class="h-[300px] relative">
+      <ScrollPanel style="width: 100%; height: 100px" class="relative" barY="true">
         <div class="content-container p-4">
           <div class="description-text mb-4">{{ prizeDescription }}</div>
-
-          <!-- Calendar Options -->
-          <div v-if="iframe" class="calendar-options flex flex-col gap-2">
-            <button @click="showCalendar = !showCalendar" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-              {{ showCalendar ? "Hide Calendar" : "View Calendar" }}
-            </button>
-
-            <div v-if="showCalendar" class="calendar-container mt-2">
-              <iframe :src="iframe" class="w-full h-[300px] rounded border border-gray-300" frameborder="0"></iframe>
-            </div>
-          </div>
-
-          <a v-if="prizeUrl" :href="prizeUrl" target="_blank" class="learn-more-link mt-4 inline-block"> Add to Calendar </a>
         </div>
+        <!-- Calendar Options -->
+        <a v-if="prizeUrl" :href="prizeUrl" target="_blank" class="learn-more-link mt-4 inline-block"> Add to Calendar </a>
       </ScrollPanel>
 
       <!-- Fixed Day Number -->
       <div class="day-number">
-        <span class="text-3xl font-bold text-yellow-300 christmas-glow">{{ day }}</span>
+        <span class="text-3xl font-bold text-yellow-300 christmas-glow opacity-30 hover:opacity-100 transition-opacity duration-300 ease-in-out">{{
+          day
+        }}</span>
       </div>
     </template>
   </Card>
@@ -99,9 +90,9 @@ const handleLockToggle = (event: Event) => {
 
 .day-number {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  padding: 0.5rem 1rem;
+  bottom: 0.5rem;
+  right: 0.2rem;
+  padding: 0.5rem 0.5rem;
   border-radius: 9999px;
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
@@ -110,7 +101,7 @@ const handleLockToggle = (event: Event) => {
 
 .lock-toggle {
   :deep(.p-button) {
-    width: 3rem !important;
+    width: 2rem !important;
     height: 1.75rem !important;
     background: rgba(0, 0, 0, 0.6) !important;
     border: none !important;

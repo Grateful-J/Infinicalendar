@@ -32,7 +32,7 @@
           </div>
 
           <!-- Back of Door (Calendar Card) -->
-          <div v-show="currentDoorForDay(day)?.doorStatus" class="absolute inset-0 backface-hidden">
+          <div v-show="currentDoorForDay(day)?.doorStatus" class="absolute inset-0 backface-hidden scroll-smooth">
             <CalendarCard
               :day="day"
               :prize-name="currentDoorForDay(day)?.prizeName"
