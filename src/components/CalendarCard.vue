@@ -2,10 +2,10 @@
   <Card class="calendar-card relative" @click.stop>
     <template #header>
       <div class="overflow-hidden">
-        <div class="absolute top-2 right-2 z-20 opacity-85">
+        <div class="absolute top-2 right-2 z-20 opacity-85 hover:opacity-100">
           <button
             @click.stop="handleLockToggle"
-            class="p-2 rounded-full bg-opacity-60 backdrop-blur-sm"
+            class="p-2 rounded-full bg-opacity-60 backdrop-blur-sm hover:bg-opacity-100"
             :class="isLockedLocal ? 'bg-red-500' : 'bg-green-500'"
           >
             <span class="text-white">
