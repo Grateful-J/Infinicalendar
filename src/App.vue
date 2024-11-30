@@ -6,7 +6,7 @@
 
     <!-- Header -->
     <div class="text-center py-6 sm:py-10">
-      <h1 class="text-4xl sm:text-6xl font-extrabold text-yellow-300 drop-shadow-md glow">Christmas Advent Calendar</h1>
+      <h1 class="text-4xl sm:text-6xl font-extrabold text-yellow-300 drop-shadow-md christmas-glow">Christmas Advent Calendar</h1>
       <p class="mt-2 sm:mt-4 text-base sm:text-lg text-gray-200">Open a new surprise each day!</p>
     </div>
 
@@ -265,8 +265,21 @@ const currentDoorForDay = (day: number) => {
   transform: rotateY(180deg);
 }
 
-.glow {
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+.christmas-glow {
+  animation: glowPulse 2s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3), 0 0 20px rgba(232, 127, 8, 0.3), 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+@keyframes glowPulse {
+  0% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 0 0 30px rgba(204, 76, 12, 0.791), 0 0 40px rgba(255, 215, 0, 0.5), 0 0 50px rgba(255, 215, 0, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3), 0 0 20px rgba(220, 36, 4, 0.3), 0 0 30px rgba(255, 215, 0, 0.3);
+  }
 }
 
 .snowflake {
