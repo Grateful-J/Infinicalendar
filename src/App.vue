@@ -94,11 +94,6 @@ const openDoorEffect = (day: number) => {
       image: prize.image,
     });
 
-    if (day === 5) {
-      snakeyDon.value = true;
-      generateSnowflakes();
-    }
-
     // Remove bow and ribbon elements when door is opened
     const doorElement = document.querySelector(`[data-day="${day}"]`);
     if (doorElement) {
@@ -110,6 +105,15 @@ const openDoorEffect = (day: number) => {
       if (bowElement) bowElement.remove();
       if (ribbonElement) ribbonElement.remove();
       if (verticalDoorElement) verticalDoorElement.remove();
+
+      // If it's the 5th day, make the snowflakes snakey
+      if (day === 5 && !snakeyDon.value) {
+        snakeyDon.value = true;
+        generateSnowflakes();
+      } else if (day === 5 && snakeyDon.value) {
+        snakeyDon.value = false;
+        generateSnowflakes();
+      }
     }
   } else {
     // Close Door and remove from openedDoors
@@ -123,37 +127,60 @@ const generateSnowflakes = () => {
   const snowflakesContainers = document.querySelectorAll(".snowflakes");
 
   snowflakesContainers.forEach((container) => {
+    // Keep existing snowflakes
+    const existingFlakes = container.querySelectorAll(".snowflake");
+
+    // Gradually fade out snowflakes that need to be removed
+    existingFlakes.forEach((flake) => {
+      if ((snakeyDon.value && flake.textContent === "🐍") || (!snakeyDon.value && flake.textContent === "❄️")) {
+        // Keep these flakes
+        return;
+      }
+
+      // Fade out others
+      flake.classList.add("opacity-0");
+      setTimeout(() => flake.remove(), 1000);
+    });
+
+    // Add new snowflakes
     const snowflakeCount = Math.floor(Math.random() * 10) + 10;
 
     for (let i = 0; i < snowflakeCount; i++) {
       const snowflake = document.createElement("div");
-      const snowflakeSize = Math.floor(Math.random() * 10) + 10;
+      const snowflakeSize = Math.floor(Math.random() * 10) + 11;
 
       snowflake.classList.add("snowflake");
-      //snowflake.style.width = `${snowflakeSize}px`;
-      //snowflake.style.height = `${snowflakeSize}px`;
+      snowflake.style.opacity = "0"; // Start invisible
 
-      snowflake.classList.add("text-4xl");
-
-      if (snowflakeSize < 15) {
+      // Set size classes based on snowflakeSize
+      if (snowflakeSize < 14) {
         snowflake.classList.add("text-xs");
-        snowflake.classList.remove("text-4xl");
-      } else if (snowflakeSize > 20) {
+      } else if (snowflakeSize > 18) {
         snowflake.classList.add("text-6xl");
-        snowflake.classList.remove("text-4xl");
       } else {
-        snowflake.classList.add("text-4xl");
-        snowflake.classList.remove("text-6xl");
+        snowflake.classList.add("text-2xl");
       }
 
-      snowflake.textContent = snakeyDon.value ? "🐍" : "❄️";
+      // Set the emoji based on snakeyDon value
+      if (snakeyDon.value) {
+        // When snakes are active, 50% chance for each type
+        snowflake.textContent = Math.random() > 0.5 ? "🐍" : "❄️";
+      } else {
+        // When snakes are inactive, only snowflakes
+        snowflake.textContent = "❄️";
+      }
 
       // Add random position and animation
       snowflake.style.left = `${Math.random() * 100}%`;
-      snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`; // Random duration between 2-5s
-      snowflake.style.animationDelay = `${Math.random() * 2}s`; // Random delay start
+      snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`;
+      snowflake.style.animationDelay = `${Math.random() * 2}s`;
 
       container.appendChild(snowflake);
+
+      // Fade in after a short delay
+      setTimeout(() => {
+        snowflake.style.opacity = "1";
+      }, Math.random() * 500);
     }
   });
 };

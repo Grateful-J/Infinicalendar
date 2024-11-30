@@ -1,7 +1,9 @@
 <template>
-  <Card class="calendar-card">
+  <Card class="calendar-card overflow-hidden">
     <template #header>
-      <img :src="getImageUrl()" alt="calendar image" class="w-full h-32 object-cover transition-all duration-300 ease-in-out hover:h-64" />
+      <div class="overflow-hidden">
+        <img :src="getImageUrl()" alt="calendar image" class="w-full h-32 object-cover transition-[height] duration-300 ease-in-out hover:h-64" />
+      </div>
     </template>
     <template #title>
       <div class="text-lg font-display">{{ cardTitle }}</div>
