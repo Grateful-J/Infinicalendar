@@ -1,16 +1,17 @@
 <template>
-  <Card class="calendar-card relative">
+  <Card class="calendar-card relative" @click.stop>
     <template #header>
       <div class="overflow-hidden">
-        <div class="absolute top-2 right-2 z-20 opacity-15 hover:opacity-100 transition-opacity duration-300 ease-in-out">
-          <ToggleButton
-            v-model="isLockedLocal"
-            onIcon="pi pi-lock"
-            offIcon="pi pi-lock-open"
-            @click.stop
-            @change="handleLockToggle"
-            class="lock-toggle"
-          />
+        <div class="absolute top-2 right-2 z-20 opacity-85">
+          <button
+            @click.stop="handleLockToggle"
+            class="p-2 rounded-full bg-opacity-60 backdrop-blur-sm"
+            :class="isLockedLocal ? 'bg-red-500' : 'bg-green-500'"
+          >
+            <span class="text-white">
+              {{ isLockedLocal ? "🔒" : "🔓" }}
+            </span>
+          </button>
         </div>
         <img :src="getImageUrl()" alt="calendar image" class="w-full h-32 object-cover transition-[height] duration-300 ease-in-out hover:h-64" />
       </div>
@@ -41,7 +42,6 @@
 import { ref, watch } from "vue";
 import Card from "primevue/card";
 import ScrollPanel from "primevue/scrollpanel";
-import ToggleButton from "primevue/togglebutton";
 
 const props = defineProps<{
   day: number;
@@ -76,8 +76,9 @@ const getImageUrl = () => {
   }
 };
 
-const handleLockToggle = (event: Event) => {
-  event.stopPropagation();
+const handleLockToggle = () => {
+  console.log("Toggle clicked, current state:", isLockedLocal.value);
+  isLockedLocal.value = !isLockedLocal.value;
   emit("toggle-lock");
 };
 </script>
@@ -184,5 +185,17 @@ const handleLockToggle = (event: Event) => {
 
 .learn-more-link:hover {
   color: #16a34a;
+}
+
+button {
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+button:active {
+  transform: scale(0.95);
 }
 </style>

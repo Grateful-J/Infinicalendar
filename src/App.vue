@@ -17,7 +17,14 @@
         <div
           class="door aspect-square bg-red-600 rounded-lg shadow-xl cursor-pointer transform transition-transform duration-500"
           :class="{ opened: currentDoorForDay(day)?.doorStatus }"
-          @click="openDoorEffect(day)"
+          @click="
+            (event) => {
+              const toggleSwitch = event.target.closest('.p-toggleswitch');
+              if (!toggleSwitch) {
+                currentDoorForDay(day)?.isLocked ? null : openDoorEffect(day);
+              }
+            }
+          "
           :data-day="day"
         >
           <div class="ribbon-horizontal"></div>
@@ -47,7 +54,7 @@
 
           <!-- Hover Glow Effect -->
           <div
-            class="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 to-red-400 opacity-0 group-hover:opacity-20"
+            class="absolute inset-0 rounded-lg bg-gradient-to-r from-yellow-400 to-red-400 opacity-0 group-hover:opacity-20 pointer-events-none"
             style="filter: blur(5px)"
           ></div>
         </div>
@@ -82,13 +89,7 @@ const snakeyDon = ref(false);
 const openDoorEffect = (day: number) => {
   const existingDoor = openedDoors.value.find((door) => door.day === day);
   if (!existingDoor) {
-    // Get random prize from adventPrizes
-    //const prize = adventPrizes[Math.floor(Math.random() * adventPrizes.length)];
-
-    // Present prizes in original order
     const prize = adventPrizes[day];
-
-    // Add new door to openedDoors
     openedDoors.value.push({
       day,
       doorStatus: true,
@@ -121,6 +122,7 @@ const openDoorEffect = (day: number) => {
       }
     }
   } else if (!existingDoor.isLocked) {
+    alert("this is locked");
     existingDoor.doorStatus = false;
     openedDoors.value = openedDoors.value.filter((door) => door.day !== day);
   }
@@ -203,6 +205,14 @@ const toggleDoorLock = (day: number) => {
   const door = openedDoors.value.find((d) => d.day === day);
   if (door) {
     door.isLocked = !door.isLocked;
+
+    // If door is unlocked, close it after a short delay
+    if (!door.isLocked) {
+      setTimeout(() => {
+        door.doorStatus = false;
+        openedDoors.value = openedDoors.value.filter((d) => d.day !== day);
+      }, 300); // Match the transition duration
+    }
   }
 };
 </script>
