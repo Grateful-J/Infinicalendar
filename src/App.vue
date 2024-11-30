@@ -1,13 +1,17 @@
 <template>
-  <div class="relative min-h-screen bg-gradient-to-b from-blue-900 to-gray-900 p-8">
+  <div class="relative min-h-screen bg-gradient-to-b from-blue-900 to-gray-900 p-4 sm:p-8">
+    <!-- Snowflakes -->
+    <div class="snowflakes"></div>
+    <div class="snowflakes" aria-hidden="true"></div>
+
     <!-- Header -->
-    <div class="text-center py-10">
-      <h1 class="text-6xl font-extrabold text-yellow-300 drop-shadow-md glow">Christmas Advent Calendar</h1>
-      <p class="mt-4 text-lg text-gray-200">Open a new surprise each day!</p>
+    <div class="text-center py-6 sm:py-10">
+      <h1 class="text-4xl sm:text-6xl font-extrabold text-yellow-300 drop-shadow-md glow">Christmas Advent Calendar</h1>
+      <p class="mt-2 sm:mt-4 text-base sm:text-lg text-gray-200">Open a new surprise each day!</p>
     </div>
 
     <!-- Calendar Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 max-w-7xl mx-auto">
       <div v-for="day in 24" :key="day" class="relative group">
         <!-- Gift Box Container -->
         <div
@@ -35,6 +39,7 @@
               :prize-description="currentDoorForDay(day)?.prizeDescription"
               :prize-url="currentDoorForDay(day)?.prizeURL"
               :door-status="currentDoorForDay(day)?.doorStatus || false"
+              :image="currentDoorForDay(day)?.image"
             />
           </div>
 
@@ -50,9 +55,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import CalendarCard from "./components/CalendarCard.vue";
-import adventPrizes from "./utils/adventPrizes";
+//import adventPrizes from "./utils/adventPrizes";
+import adventPrizes from "./utils/secretCals";
 
 // Define the type for door objects
 interface Door {
@@ -80,6 +86,7 @@ const openDoorEffect = (day: number) => {
       prizeName: prize.name,
       prizeDescription: prize.description,
       prizeURL: prize.url,
+      image: prize.image,
     });
 
     // Remove bow and ribbon elements when door is opened
@@ -101,6 +108,36 @@ const openDoorEffect = (day: number) => {
   }
 };
 
+// Generate random snowflakes
+const generateSnowflakes = () => {
+  const snowflakesContainers = document.querySelectorAll(".snowflakes");
+
+  snowflakesContainers.forEach((container) => {
+    const snowflakeCount = Math.floor(Math.random() * 10) + 10;
+
+    for (let i = 0; i < snowflakeCount; i++) {
+      const snowflake = document.createElement("div");
+      const snowflakeSize = Math.floor(Math.random() * 10) + 10;
+
+      snowflake.classList.add("snowflake");
+      snowflake.style.width = `${snowflakeSize}px`;
+      snowflake.style.height = `${snowflakeSize}px`;
+      snowflake.textContent = "❄️";
+
+      // Add random position and animation
+      snowflake.style.left = `${Math.random() * 100}%`;
+      snowflake.style.animationDuration = `${Math.random() * 3 + 2}s`; // Random duration between 2-5s
+      snowflake.style.animationDelay = `${Math.random() * 2}s`; // Random delay start
+
+      container.appendChild(snowflake);
+    }
+  });
+};
+
+onMounted(() => {
+  generateSnowflakes();
+});
+
 // Function to get current door info
 const currentDoorForDay = (day: number) => {
   return openedDoors.value.find((door) => door.day === day);
@@ -109,8 +146,8 @@ const currentDoorForDay = (day: number) => {
 
 <style scoped>
 .door {
-  width: 200px;
-  height: 300px;
+  width: 100%;
+  height: auto;
   position: relative;
   transform-style: preserve-3d;
   transition: transform 0.6s ease-in-out;
@@ -179,5 +216,20 @@ const currentDoorForDay = (day: number) => {
 
 .glow {
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.snowflake {
+  position: absolute;
+  top: -20px;
+  animation: snowfall linear infinite;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-20px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
 }
 </style>
