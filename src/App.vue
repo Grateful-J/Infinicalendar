@@ -127,11 +127,13 @@ const generateSnowflakes = () => {
 
     for (let i = 0; i < snowflakeCount; i++) {
       const snowflake = document.createElement("div");
-      const snowflakeSize = Math.floor(Math.random() * 10) + 400;
+      //const snowflakeSize = Math.floor(Math.random() * 10) + 400;
 
       snowflake.classList.add("snowflake");
-      snowflake.style.width = `${snowflakeSize}px`;
-      snowflake.style.height = `${snowflakeSize}px`;
+      //snowflake.style.width = `${snowflakeSize}px`;
+      //snowflake.style.height = `${snowflakeSize}px`;
+
+      snowflake.classList.add("text-4xl");
 
       snowflake.textContent = snakeyDon.value ? "🐍" : "❄️";
 
