@@ -77,7 +77,10 @@ const openDoorEffect = (day: number) => {
   const existingDoor = openedDoors.value.find((door) => door.day === day);
   if (!existingDoor) {
     // Get random prize from adventPrizes
-    const prize = adventPrizes[Math.floor(Math.random() * adventPrizes.length)];
+    //const prize = adventPrizes[Math.floor(Math.random() * adventPrizes.length)];
+
+    // Present prizes in original order
+    const prize = adventPrizes[day];
 
     // Add new door to openedDoors
     openedDoors.value.push({

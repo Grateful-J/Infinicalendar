@@ -1,7 +1,7 @@
 <template>
   <Card class="calendar-card">
     <template #header>
-      <img :src="getImageUrl()" alt="calendar image" class="w-full h-32 object-cover" />
+      <img :src="getImageUrl()" alt="calendar image" class="w-full h-32 object-cover transition-all duration-300 ease-in-out hover:h-64" />
     </template>
     <template #title>
       <div class="text-lg font-display">{{ cardTitle }}</div>
