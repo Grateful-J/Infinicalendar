@@ -127,13 +127,24 @@ const generateSnowflakes = () => {
 
     for (let i = 0; i < snowflakeCount; i++) {
       const snowflake = document.createElement("div");
-      //const snowflakeSize = Math.floor(Math.random() * 10) + 400;
+      const snowflakeSize = Math.floor(Math.random() * 10) + 10;
 
       snowflake.classList.add("snowflake");
       //snowflake.style.width = `${snowflakeSize}px`;
       //snowflake.style.height = `${snowflakeSize}px`;
 
       snowflake.classList.add("text-4xl");
+
+      if (snowflakeSize < 15) {
+        snowflake.classList.add("text-xs");
+        snowflake.classList.remove("text-4xl");
+      } else if (snowflakeSize > 20) {
+        snowflake.classList.add("text-6xl");
+        snowflake.classList.remove("text-4xl");
+      } else {
+        snowflake.classList.add("text-4xl");
+        snowflake.classList.remove("text-6xl");
+      }
 
       snowflake.textContent = snakeyDon.value ? "🐍" : "❄️";
 
