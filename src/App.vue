@@ -85,6 +85,10 @@ const openedDoors = ref<Door[]>([]);
 
 const snakeyDon = ref(false);
 
+// Session storage for openedDoors
+const sessionStorageKey = sessionStorage.getItem("openedDoors") || "[]";
+openedDoors.value = JSON.parse(sessionStorageKey);
+
 // Function to handle door opening
 const openDoorEffect = (day: number) => {
   const existingDoor = openedDoors.value.find((door) => door.day === day);
@@ -99,6 +103,7 @@ const openDoorEffect = (day: number) => {
       prizeURL: prize.url,
       image: prize.image,
     });
+    sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
 
     // Remove bow and ribbon elements when door is opened
     const doorElement = document.querySelector(`[data-day="${day}"]`);
@@ -125,6 +130,7 @@ const openDoorEffect = (day: number) => {
     alert("this is locked");
     existingDoor.doorStatus = false;
     openedDoors.value = openedDoors.value.filter((door) => door.day !== day);
+    sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
   }
 };
 
@@ -193,6 +199,8 @@ const generateSnowflakes = () => {
 
 onMounted(() => {
   generateSnowflakes();
+  sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
+  console.log("openedDoors", openedDoors.value);
 });
 
 // Function to get current door info
@@ -206,11 +214,16 @@ const toggleDoorLock = (day: number) => {
   if (door) {
     door.isLocked = !door.isLocked;
 
+    // Immediately update session storage
+    sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
+
     // If door is unlocked, close it after a short delay
     if (!door.isLocked) {
       setTimeout(() => {
         door.doorStatus = false;
         openedDoors.value = openedDoors.value.filter((d) => d.day !== day);
+        // Update session storage again after removing the door
+        sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
       }, 300); // Match the transition duration
     }
   }

@@ -77,7 +77,7 @@ const getImageUrl = () => {
 };
 
 const handleLockToggle = () => {
-  console.log("Toggle clicked, current state:", isLockedLocal.value);
+  //console.log("Toggle clicked, current state:", isLockedLocal.value);
   isLockedLocal.value = !isLockedLocal.value;
   emit("toggle-lock");
 };
