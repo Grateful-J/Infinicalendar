@@ -20,12 +20,21 @@
       <div class="text-lg font-display">{{ prizeName }}</div>
     </template>
     <template #content>
-      <ScrollPanel style="width: 100%; height: 100px" class="relative" barY="true">
+      <ScrollPanel style="width: 100%; height: 75px" class="relative hover:scale-105 transition-transform duration-300 ease-in-out">
         <div class="content-container p-4">
           <div class="description-text mb-4">{{ prizeDescription }}</div>
         </div>
         <!-- Calendar Options -->
-        <a v-if="prizeUrl" :href="prizeUrl" target="_blank" class="learn-more-link mt-4 inline-block"> Add to Calendar </a>
+        <div class="flex justify-center">
+          <button
+            v-if="prizeUrl"
+            @click.stop="window.open(prizeUrl, '_blank')"
+            class="calendar-btn px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold shadow-lg hover:shadow-xl flex items-center gap-2 backdrop-blur-sm"
+          >
+            <span class="calendar-icon">📅</span>
+            <span class="whitespace-nowrap">Add to Calendar</span>
+          </button>
+        </div>
       </ScrollPanel>
 
       <!-- Fixed Day Number -->
@@ -197,5 +206,51 @@ button:hover {
 
 button:active {
   transform: scale(0.95);
+}
+
+.calendar-btn {
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transform-origin: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.calendar-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
+}
+
+.calendar-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.calendar-btn:hover::before {
+  left: 100%;
+}
+
+.calendar-btn:active {
+  transform: scale(0.95);
+}
+
+.calendar-icon {
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
 }
 </style>
