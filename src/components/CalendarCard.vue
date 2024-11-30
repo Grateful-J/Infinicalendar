@@ -1,30 +1,56 @@
 <template>
-  <Card class="calendar-card overflow-hidden">
+  <Card class="calendar-card relative">
     <template #header>
       <div class="overflow-hidden">
+        <div class="absolute top-2 right-2 z-20 opacity-75">
+          <ToggleButton
+            v-model="isLockedLocal"
+            onIcon="pi pi-lock"
+            offIcon="pi pi-lock-open"
+            @click.stop
+            @change="handleLockToggle"
+            class="lock-toggle"
+          />
+        </div>
         <img :src="getImageUrl()" alt="calendar image" class="w-full h-32 object-cover transition-[height] duration-300 ease-in-out hover:h-64" />
       </div>
     </template>
     <template #title>
-      <div class="text-lg font-display">{{ cardTitle }}</div>
-    </template>
-    <template #subtitle>
-      <div class="subtitle-container">
-        <span class="font-display">{{ prizeName }}</span>
-      </div>
+      <div class="text-lg font-display">{{ prizeName }}</div>
     </template>
     <template #content>
-      <div class="content-container">
-        <div class="description-text">{{ prizeDescription }}</div>
-        <a v-if="prizeUrl" :href="prizeUrl" class="learn-more-link"> Learn More </a>
+      <ScrollPanel class="h-[300px] relative">
+        <div class="content-container p-4">
+          <div class="description-text mb-4">{{ prizeDescription }}</div>
+
+          <!-- Calendar Options -->
+          <div v-if="iframe" class="calendar-options flex flex-col gap-2">
+            <button @click="showCalendar = !showCalendar" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+              {{ showCalendar ? "Hide Calendar" : "View Calendar" }}
+            </button>
+
+            <div v-if="showCalendar" class="calendar-container mt-2">
+              <iframe :src="iframe" class="w-full h-[300px] rounded border border-gray-300" frameborder="0"></iframe>
+            </div>
+          </div>
+
+          <a v-if="prizeUrl" :href="prizeUrl" target="_blank" class="learn-more-link mt-4 inline-block"> Add to Calendar </a>
+        </div>
+      </ScrollPanel>
+
+      <!-- Fixed Day Number -->
+      <div class="day-number">
+        <span class="text-3xl font-bold text-yellow-300 christmas-glow">{{ day }}</span>
       </div>
     </template>
   </Card>
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import Card from "primevue/card";
-//import { onMounted } from "vue";
+import ScrollPanel from "primevue/scrollpanel";
+import ToggleButton from "primevue/togglebutton";
 
 const props = defineProps<{
   day: number;
@@ -33,20 +59,35 @@ const props = defineProps<{
   prizeUrl?: string;
   doorStatus: boolean;
   image?: string;
+  iframe?: string;
+  isLocked: boolean;
 }>();
 
-const cardTitle = `Day ${props.day}`;
-const cardSubtitle = props.prizeName;
+const emit = defineEmits(["toggle-lock"]);
+
+const showCalendar = ref(false);
+const isLockedLocal = ref(props.isLocked);
+
+watch(
+  () => props.isLocked,
+  (newValue) => {
+    isLockedLocal.value = newValue;
+  }
+);
 
 // Function to handle image path
 const getImageUrl = () => {
   try {
-    console.log(`Hey! Were you looking for this image? ${props.image}`);
     return new URL(`../assets/images/${props.image}`, import.meta.url).href;
   } catch (error) {
     console.error("Error loading image:", error);
     return "";
   }
+};
+
+const handleLockToggle = (event: Event) => {
+  event.stopPropagation();
+  emit("toggle-lock");
 };
 </script>
 
@@ -54,61 +95,85 @@ const getImageUrl = () => {
 .calendar-card {
   width: 100% !important;
   height: 100% !important;
-  min-height: 200px;
-  max-height: 300px;
+}
+
+.day-number {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 10;
+}
+
+.lock-toggle {
+  :deep(.p-button) {
+    width: 3rem !important;
+    height: 1.75rem !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    border: none !important;
+    backdrop-filter: blur(4px);
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.7) !important;
+    }
+
+    /* Hide the label text */
+    .p-button-label {
+      display: none;
+    }
+
+    /* Style the icons */
+    .pi {
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Optional: Add transition for smooth toggle */
+    transition: background-color 0.2s ease;
+  }
+
+  /* Style the checked state */
+  :deep(.p-button.p-highlight) {
+    background: rgba(59, 130, 246, 0.6) !important;
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.7) !important;
+    }
+  }
+}
+
+/* Ensure the toggle button container doesn't interfere with clicks */
+.lock-toggle-container {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 20;
 }
 
 :deep(.p-card) {
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(10px);
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
 }
 
-:deep(.p-card-body) {
-  padding: 0.75rem !important;
-  height: calc(100% - 128px);
-  display: flex;
-  flex-direction: column;
+:deep(.p-scrollpanel) {
+  .p-scrollpanel-wrapper {
+    border-radius: 8px;
+  }
+  .p-scrollpanel-bar {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+  }
 }
 
-:deep(.p-card-title) {
-  color: white;
-  font-family: "Montserrat", sans-serif;
-  font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-  margin-bottom: 0.25rem !important;
-  text-align: center;
-}
-
-.subtitle-container {
-  padding: 0.25rem;
-  font-size: clamp(0.9rem, 2.5vw, 1rem);
-  color: white;
-  white-space: start;
-  overflow: auto;
-  text-overflow: inherit;
-  font-family: "Montserrat", sans-serif;
-}
-
-.content-container {
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  height: 100%;
-  overflow-y: scroll;
-  color: white;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-}
-
-.content-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.content-container::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
+/* Optional: Add some glow to the day number */
+.christmas-glow {
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.2);
 }
 
 .description-text {

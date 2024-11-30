@@ -40,6 +40,8 @@
               :prize-url="currentDoorForDay(day)?.prizeURL"
               :door-status="currentDoorForDay(day)?.doorStatus || false"
               :image="currentDoorForDay(day)?.image"
+              :is-locked="currentDoorForDay(day)?.isLocked || true"
+              @toggle-lock="toggleDoorLock(day)"
             />
           </div>
 
@@ -64,9 +66,11 @@ import adventPrizes from "./utils/secretCals";
 interface Door {
   day: number;
   doorStatus: boolean;
+  isLocked: boolean;
   prizeName: string;
   prizeDescription: string;
   prizeURL?: string;
+  image?: string;
 }
 
 // Initialize openedDoors as a ref with the Door type
@@ -88,6 +92,7 @@ const openDoorEffect = (day: number) => {
     openedDoors.value.push({
       day,
       doorStatus: true,
+      isLocked: true,
       prizeName: prize.name,
       prizeDescription: prize.description,
       prizeURL: prize.url,
@@ -115,8 +120,7 @@ const openDoorEffect = (day: number) => {
         generateSnowflakes();
       }
     }
-  } else {
-    // Close Door and remove from openedDoors
+  } else if (!existingDoor.isLocked) {
     existingDoor.doorStatus = false;
     openedDoors.value = openedDoors.value.filter((door) => door.day !== day);
   }
@@ -192,6 +196,14 @@ onMounted(() => {
 // Function to get current door info
 const currentDoorForDay = (day: number) => {
   return openedDoors.value.find((door) => door.day === day);
+};
+
+// Function to toggle door lock
+const toggleDoorLock = (day: number) => {
+  const door = openedDoors.value.find((d) => d.day === day);
+  if (door) {
+    door.isLocked = !door.isLocked;
+  }
 };
 </script>
 
