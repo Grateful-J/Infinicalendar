@@ -72,6 +72,8 @@ interface Door {
 // Initialize openedDoors as a ref with the Door type
 const openedDoors = ref<Door[]>([]);
 
+const snakeyDon = ref(false);
+
 // Function to handle door opening
 const openDoorEffect = (day: number) => {
   const existingDoor = openedDoors.value.find((door) => door.day === day);
@@ -91,6 +93,11 @@ const openDoorEffect = (day: number) => {
       prizeURL: prize.url,
       image: prize.image,
     });
+
+    if (day === 5) {
+      snakeyDon.value = true;
+      generateSnowflakes();
+    }
 
     // Remove bow and ribbon elements when door is opened
     const doorElement = document.querySelector(`[data-day="${day}"]`);
@@ -120,12 +127,13 @@ const generateSnowflakes = () => {
 
     for (let i = 0; i < snowflakeCount; i++) {
       const snowflake = document.createElement("div");
-      const snowflakeSize = Math.floor(Math.random() * 10) + 10;
+      const snowflakeSize = Math.floor(Math.random() * 10) + 400;
 
       snowflake.classList.add("snowflake");
       snowflake.style.width = `${snowflakeSize}px`;
       snowflake.style.height = `${snowflakeSize}px`;
-      snowflake.textContent = "❄️";
+
+      snowflake.textContent = snakeyDon.value ? "🐍" : "❄️";
 
       // Add random position and animation
       snowflake.style.left = `${Math.random() * 100}%`;
