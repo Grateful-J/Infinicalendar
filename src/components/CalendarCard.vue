@@ -20,7 +20,17 @@
       <div class="text-lg font-display">{{ prizeName }}</div>
     </template>
     <template #content>
-      <ScrollPanel style="width: 100%; height: 75px" class="relative hover:scale-105 transition-transform duration-300 ease-in-out">
+      <ScrollPanel
+        style="width: 100%; height: 75px"
+        class="relative hover:scale-105 transition-transform duration-300 ease-in-out"
+        :pt="{
+          root: { class: 'relative' },
+          contentContainer: { class: 'p-4' },
+          barY: {
+            style: 'background-color: #22c55e !important; width: 8px !important; border-radius: 9999px !important',
+          },
+        }"
+      >
         <div class="content-container p-4">
           <div class="description-text mb-4">{{ prizeDescription }}</div>
         </div>
@@ -263,5 +273,22 @@ button:active {
   50% {
     transform: translateY(-2px);
   }
+}
+
+/* Backup approach using deep selectors */
+:deep(.p-scrollpanel) {
+  .p-scrollpanel-bar-y {
+    background-color: #22c55e !important;
+    width: 8px !important;
+    border-radius: 9999px !important;
+  }
+}
+
+/* Alternative approach using direct CSS custom properties */
+:deep(.p-scrollpanel-bar-y) {
+  --scrollbar-color: #22c55e;
+  background: var(--scrollbar-color) !important;
+  width: 8px !important;
+  border-radius: 9999px !important;
 }
 </style>
