@@ -315,7 +315,11 @@ const handleDoorClick = (event: Event, day: number) => {
     if (currentDoorForDay(day)?.isLocked) return;
 
     if (isMobileView.value) {
-      openDoorEffect(day);
+      // If door isn't open yet, open it first
+      if (!currentDoorForDay(day)) {
+        openDoorEffect(day);
+      }
+      // Always show the expanded view on mobile
       expandedDay.value = day;
     } else {
       openDoorEffect(day);
