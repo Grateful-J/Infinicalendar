@@ -55,7 +55,7 @@
       </div>
     </div>
     <GreetingPopup v-show="showGreetingPopup" />
-    <CaptchaCheck />
+    <CaptchaCheck v-show="!captchaCompleted" />
   </div>
 </template>
 
@@ -84,6 +84,8 @@ const openedDoors = ref<Door[]>([]);
 const snakeyDon = ref(false);
 
 const showGreetingPopup = ref(false);
+
+const captchaCompleted = ref(false);
 
 // Session storage for openedDoors
 const sessionStorageKey = sessionStorage.getItem("openedDoors") || "[]";
@@ -198,6 +200,13 @@ const generateSnowflakes = () => {
   });
 };
 
+const captchaChecker = () => {
+  const captchaCompletedSession = sessionStorage.getItem("captchaCompleted");
+  console.log("captchaCompletedSession", captchaCompletedSession);
+
+  captchaCompleted.value = captchaCompletedSession === "true" ? true : false;
+};
+
 onMounted(() => {
   generateSnowflakes();
 
@@ -220,6 +229,9 @@ onMounted(() => {
   }
   sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
   console.log("openedDoors", openedDoors.value);
+
+  // Check if captcha is completed
+  captchaChecker();
 });
 
 // Function to get current door info
