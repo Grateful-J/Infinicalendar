@@ -229,7 +229,7 @@ const toggleDoorLock = (day: number) => {
 const handleDoorClick = (event: Event, day: number) => {
   if (lockDoorIfFuture(day)) {
     console.log(`door:${day} is locked`);
-    alert("This door is locked until the day it opens");
+    alert(`Door ${day} is locked! Come back on ${new Date(new Date().setDate(day)).toLocaleDateString()}`);
     return;
   }
 
