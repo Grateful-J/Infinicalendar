@@ -1,5 +1,5 @@
 <template>
-  <Card class="calendar-card relative" @click="handleCardClick">
+  <Card class="calendar-card relative" :class="{ 'mobile-expanded': isMobileExpanded }" @click="handleCardClick">
     <template #header>
       <div class="overflow-hidden">
         <div class="absolute top-2 right-2 z-20 opacity-85 hover:opacity-100">
@@ -99,10 +99,15 @@ const handleLockToggle = () => {
   emit("toggle-lock");
 };
 
+const isMobileExpanded = ref(false);
+
 const handleCardClick = () => {
-  console.log("Card clicked, locked state:", isLockedLocal.value); // Debug log
   if (!isLockedLocal.value) {
-    emit("click");
+    if (window.innerWidth < 640) {
+      isMobileExpanded.value = !isMobileExpanded.value;
+    } else {
+      emit("click");
+    }
   }
 };
 
@@ -117,6 +122,7 @@ const openCalendarUrl = () => {
 .calendar-card {
   width: 100% !important;
   height: 100% !important;
+  transition: all 0.3s ease;
 }
 
 .day-number {
@@ -290,5 +296,69 @@ button:active {
   background: var(--scrollbar-color) !important;
   width: 8px !important;
   border-radius: 9999px !important;
+}
+
+/* Mobile expanded state */
+.mobile-expanded {
+  @media (max-width: 640px) {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;
+    height: auto !important;
+    max-height: 90vh !important;
+    z-index: 99999 !important;
+    overflow-y: auto;
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.75);
+  }
+
+  :deep(.p-card) {
+    height: 100%;
+  }
+
+  :deep(img) {
+    height: 200px !important;
+  }
+
+  :deep(.p-scrollpanel) {
+    height: auto !important;
+    max-height: 300px !important;
+  }
+}
+
+/* Add backdrop when card is expanded */
+.mobile-expanded::before {
+  @media (max-width: 640px) {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: -1;
+  }
+}
+
+/* Add a close button for mobile expanded state */
+.mobile-expanded::after {
+  @media (max-width: 640px) {
+    content: "×";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 100000;
+  }
 }
 </style>

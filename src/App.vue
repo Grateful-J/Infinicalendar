@@ -16,7 +16,10 @@
         <!-- Gift Box Container -->
         <div
           class="door aspect-square bg-red-600 rounded-lg shadow-xl cursor-pointer transform transition-transform duration-500"
-          :class="{ opened: currentDoorForDay(day)?.doorStatus }"
+          :class="{
+            opened: currentDoorForDay(day)?.doorStatus,
+            invisible: isMobileView && expandedDay === day,
+          }"
           @click="(event) => handleDoorClick(event, day)"
           :data-day="day"
         >
@@ -54,6 +57,33 @@
         </div>
       </div>
     </div>
+
+    <!-- Mobile Expanded Card Container -->
+    <Teleport to="body">
+      <div v-if="expandedDay" class="fixed inset-0 z-[9999] flex items-center justify-center">
+        <div class="absolute inset-0 bg-black bg-opacity-75" @click="expandedDay = null"></div>
+        <div class="relative w-[90vw] max-w-lg z-[10000]">
+          <CalendarCard
+            v-if="currentDoorForDay(expandedDay)"
+            :day="expandedDay"
+            :prize-name="currentDoorForDay(expandedDay)?.prizeName"
+            :prize-description="currentDoorForDay(expandedDay)?.prizeDescription"
+            :prize-url="currentDoorForDay(expandedDay)?.prizeURL"
+            :door-status="currentDoorForDay(expandedDay)?.doorStatus || false"
+            :image="currentDoorForDay(expandedDay)?.image"
+            :is-locked="currentDoorForDay(expandedDay)?.isLocked || true"
+            @toggle-lock="toggleDoorLock(expandedDay)"
+            @click="handleCardClick(expandedDay)"
+          />
+          <button
+            @click="expandedDay = null"
+            class="absolute -top-4 -right-4 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center"
+          >
+            ×
+          </button>
+        </div>
+      </div>
+    </Teleport>
     <GreetingPopup v-show="showGreetingPopup" />
     <CaptchaCheck v-show="!captchaCompleted" />
   </div>
@@ -86,6 +116,9 @@ const snakeyDon = ref(false);
 const showGreetingPopup = ref(false);
 
 const captchaCompleted = ref(false);
+
+const expandedDay = ref<number | null>(null);
+const isMobileView = ref(window.innerWidth < 640);
 
 // Session storage for openedDoors
 const sessionStorageKey = sessionStorage.getItem("openedDoors") || "[]";
@@ -261,7 +294,12 @@ const toggleDoorLock = (day: number) => {
   }
 };
 
-// Add this new function
+// Update isMobileView on window resize
+window.addEventListener("resize", () => {
+  isMobileView.value = window.innerWidth < 640;
+});
+
+// Modify handleDoorClick
 const handleDoorClick = (event: Event, day: number) => {
   if (lockDoorIfFuture(day)) {
     if (day === 5) {
@@ -274,18 +312,27 @@ const handleDoorClick = (event: Event, day: number) => {
 
   const toggleSwitch = (event.target as HTMLElement)?.closest(".p-toggleswitch");
   if (!toggleSwitch) {
-    currentDoorForDay(day)?.isLocked ? null : openDoorEffect(day);
+    if (currentDoorForDay(day)?.isLocked) return;
+
+    if (isMobileView.value) {
+      openDoorEffect(day);
+      expandedDay.value = day;
+    } else {
+      openDoorEffect(day);
+    }
   }
 };
 
+// Modify handleCardClick
 const handleCardClick = (day: number) => {
-  console.log("Card clicked in App.vue, day:", day); // Debug log
   const door = currentDoorForDay(day);
   if (door && !door.isLocked) {
-    console.log("Closing door:", day); // Debug log
-    door.doorStatus = false;
-    openedDoors.value = openedDoors.value.filter((d) => d.day !== day);
-    sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
+    if (!isMobileView.value) {
+      door.doorStatus = false;
+      openedDoors.value = openedDoors.value.filter((d) => d.day !== day);
+      sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
+    }
+    // On mobile, clicking the card does nothing (closing is handled by the overlay/close button)
   }
 };
 </script>
@@ -390,5 +437,9 @@ const handleCardClick = (day: number) => {
   100% {
     transform: translateY(100vh) rotate(360deg);
   }
+}
+
+.invisible {
+  visibility: hidden;
 }
 </style>
