@@ -17,14 +17,7 @@
         <div
           class="door aspect-square bg-red-600 rounded-lg shadow-xl cursor-pointer transform transition-transform duration-500"
           :class="{ opened: currentDoorForDay(day)?.doorStatus }"
-          @click="
-            (event) => {
-              const toggleSwitch = event.target.closest('.p-toggleswitch');
-              if (!toggleSwitch) {
-                currentDoorForDay(day)?.isLocked ? null : openDoorEffect(day);
-              }
-            }
-          "
+          @click="(event) => handleDoorClick(event, day)"
           :data-day="day"
         >
           <div class="ribbon-horizontal"></div>
@@ -208,24 +201,41 @@ const currentDoorForDay = (day: number) => {
   return openedDoors.value.find((door) => door.day === day);
 };
 
+// Locks door if the day is in the future
+const lockDoorIfFuture = (day: number) => {
+  const currentDate = new Date().getDate();
+  return day > currentDate;
+};
+
 // Function to toggle door lock
 const toggleDoorLock = (day: number) => {
   const door = openedDoors.value.find((d) => d.day === day);
-  if (door) {
-    door.isLocked = !door.isLocked;
 
-    // Immediately update session storage
-    sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
+  // Immediately update session storage
+  sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
 
-    // If door is unlocked, close it after a short delay
-    if (!door.isLocked) {
-      setTimeout(() => {
-        door.doorStatus = false;
-        openedDoors.value = openedDoors.value.filter((d) => d.day !== day);
-        // Update session storage again after removing the door
-        sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
-      }, 300); // Match the transition duration
-    }
+  // If door is unlocked, close it after a short delay
+  if (!door.isLocked) {
+    setTimeout(() => {
+      door.doorStatus = false;
+      openedDoors.value = openedDoors.value.filter((d) => d.day !== day);
+      // Update session storage again after removing the door
+      sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
+    }, 300); // Match the transition duration
+  }
+};
+
+// Add this new function
+const handleDoorClick = (event: Event, day: number) => {
+  if (lockDoorIfFuture(day)) {
+    console.log(`door:${day} is locked`);
+    alert("This door is locked until the day it opens");
+    return;
+  }
+
+  const toggleSwitch = event.target?.closest(".p-toggleswitch");
+  if (!toggleSwitch) {
+    currentDoorForDay(day)?.isLocked ? null : openDoorEffect(day);
   }
 };
 </script>

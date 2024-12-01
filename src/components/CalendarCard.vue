@@ -28,8 +28,8 @@
         <div class="flex justify-center">
           <button
             v-if="prizeUrl"
-            @click.stop="window.open(prizeUrl, '_blank')"
             class="calendar-btn px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold shadow-lg hover:shadow-xl flex items-center gap-2 backdrop-blur-sm"
+            @click="() => window?.open(prizeUrl, '_blank')"
           >
             <span class="calendar-icon">📅</span>
             <span class="whitespace-nowrap">Add to Calendar</span>
