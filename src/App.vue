@@ -42,6 +42,7 @@
               :image="currentDoorForDay(day)?.image"
               :is-locked="currentDoorForDay(day)?.isLocked || true"
               @toggle-lock="toggleDoorLock(day)"
+              @click="handleCardClick(day)"
             />
           </div>
 
@@ -232,19 +233,11 @@ const lockDoorIfFuture = (day: number) => {
 
 // Function to toggle door lock
 const toggleDoorLock = (day: number) => {
+  console.log("Toggle lock clicked, day:", day); // Debug log
   const door = openedDoors.value.find((d) => d.day === day);
-
-  // Immediately update session storage
-  sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
-
-  // If door is unlocked, close it after a short delay
-  if (!door.isLocked) {
-    setTimeout(() => {
-      door.doorStatus = false;
-      openedDoors.value = openedDoors.value.filter((d) => d.day !== day);
-      // Update session storage again after removing the door
-      sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
-    }, 300); // Match the transition duration
+  if (door) {
+    door.isLocked = !door.isLocked;
+    sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
   }
 };
 
@@ -256,9 +249,20 @@ const handleDoorClick = (event: Event, day: number) => {
     return;
   }
 
-  const toggleSwitch = event.target?.closest(".p-toggleswitch");
+  const toggleSwitch = (event.target as HTMLElement)?.closest(".p-toggleswitch");
   if (!toggleSwitch) {
     currentDoorForDay(day)?.isLocked ? null : openDoorEffect(day);
+  }
+};
+
+const handleCardClick = (day: number) => {
+  console.log("Card clicked in App.vue, day:", day); // Debug log
+  const door = currentDoorForDay(day);
+  if (door && !door.isLocked) {
+    console.log("Closing door:", day); // Debug log
+    door.doorStatus = false;
+    openedDoors.value = openedDoors.value.filter((d) => d.day !== day);
+    sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
   }
 };
 </script>

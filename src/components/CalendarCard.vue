@@ -1,5 +1,5 @@
 <template>
-  <Card class="calendar-card relative" @click.stop>
+  <Card class="calendar-card relative" @click="handleCardClick">
     <template #header>
       <div class="overflow-hidden">
         <div class="absolute top-2 right-2 z-20 opacity-85 hover:opacity-100">
@@ -29,7 +29,7 @@
           <button
             v-if="prizeUrl"
             class="calendar-btn px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold shadow-lg hover:shadow-xl flex items-center gap-2 backdrop-blur-sm"
-            @click="() => window?.open(prizeUrl, '_blank')"
+            @click.stop="openCalendarUrl"
           >
             <span class="calendar-icon">📅</span>
             <span class="whitespace-nowrap">Add to Calendar</span>
@@ -63,9 +63,8 @@ const props = defineProps<{
   isLocked: boolean;
 }>();
 
-const emit = defineEmits(["toggle-lock"]);
+const emit = defineEmits(["toggle-lock", "click"]);
 
-const showCalendar = ref(false);
 const isLockedLocal = ref(props.isLocked);
 
 watch(
@@ -86,9 +85,21 @@ const getImageUrl = () => {
 };
 
 const handleLockToggle = () => {
-  //console.log("Toggle clicked, current state:", isLockedLocal.value);
   isLockedLocal.value = !isLockedLocal.value;
   emit("toggle-lock");
+};
+
+const handleCardClick = () => {
+  console.log("Card clicked, locked state:", isLockedLocal.value); // Debug log
+  if (!isLockedLocal.value) {
+    emit("click");
+  }
+};
+
+const openCalendarUrl = () => {
+  if (props.prizeUrl) {
+    window.open(props.prizeUrl, "_blank");
+  }
 };
 </script>
 
