@@ -201,10 +201,16 @@ const generateSnowflakes = () => {
 };
 
 const captchaChecker = () => {
+  // Check if captcha is completed
   const captchaCompletedSession = sessionStorage.getItem("captchaCompleted");
   console.log("captchaCompletedSession", captchaCompletedSession);
 
-  captchaCompleted.value = captchaCompletedSession === "true" ? true : false;
+  // TODO: Reinstate this when we have new captchas
+  // captchaCompleted.value = captchaCompletedSession === "true" ? true : false;
+
+  // TODO: Add new captchas for each week with a new twist
+  // for now, defaulting to true
+  captchaCompleted.value = true;
 };
 
 onMounted(() => {
