@@ -53,6 +53,7 @@
         </div>
       </div>
     </div>
+    <GreetingPopup />
   </div>
 </template>
 
@@ -61,6 +62,7 @@ import { ref, onMounted } from "vue";
 import CalendarCard from "./components/CalendarCard.vue";
 //import adventPrizes from "./utils/adventPrizes";
 import adventPrizes from "./utils/secretCals";
+import GreetingPopup from "./components/GreetingPopup.vue";
 
 // Define the type for door objects
 interface Door {
