@@ -108,9 +108,10 @@ const openDoorEffect = (day: number) => {
       const bowElement = doorElement.querySelector(".bow");
       const ribbonElement = doorElement.querySelector(".ribbon-horizontal");
       //remove vertical door element
-      const verticalDoorElement = doorElement.querySelector(".robbon-vertical");
+      const verticalDoorElement = doorElement.querySelector(".ribbon-vertical");
 
       if (bowElement) bowElement.remove();
+
       if (ribbonElement) ribbonElement.remove();
       if (verticalDoorElement) verticalDoorElement.remove();
 
@@ -196,6 +197,20 @@ const generateSnowflakes = () => {
 
 onMounted(() => {
   generateSnowflakes();
+
+  // Remove bow and ribbon elements for previously opened doors
+  openedDoors.value.forEach((door) => {
+    const doorElement = document.querySelector(`[data-day="${door.day}"]`);
+    if (doorElement) {
+      const bowElement = doorElement.querySelector(".bow");
+      const ribbonElement = doorElement.querySelector(".ribbon-horizontal");
+      const verticalRibbonElement = doorElement.querySelector(".ribbon-vertical");
+
+      if (bowElement) bowElement.remove();
+      if (ribbonElement) ribbonElement.remove();
+      if (verticalRibbonElement) verticalRibbonElement.remove();
+    }
+  });
 
   if (openedDoors.value.length < 1) {
     showGreetingPopup.value = true;
