@@ -6,7 +6,7 @@
 
     <!-- Header -->
     <div class="text-center py-6 sm:py-10">
-      <h1 class="text-4xl sm:text-6xl font-extrabold text-yellow-300 drop-shadow-md christmas-glow">Christmas Advent Calendar</h1>
+      <h1 class="text-4xl sm:text-6xl font-extrabold text-yellow-300 drop-shadow-md christmas-glow">Christmas "Google Calendar" Advent Calendar</h1>
       <p class="mt-2 sm:mt-4 text-base sm:text-lg text-gray-200">Open a new surprise each day!</p>
     </div>
 
@@ -264,8 +264,11 @@ const toggleDoorLock = (day: number) => {
 // Add this new function
 const handleDoorClick = (event: Event, day: number) => {
   if (lockDoorIfFuture(day)) {
-    console.log(`door:${day} is locked`);
-    alert(`Door ${day} is locked! Come back on ${new Date(new Date().setDate(day)).toLocaleDateString()}`);
+    if (day === 5) {
+      alert("HISS! 🐍HISS!🐍  I'd be careful of opening that door! Come back another day!");
+    } else {
+      alert(`Door ${day} is locked! Come back on ${new Date(new Date().setDate(day)).toLocaleDateString()}`);
+    }
     return;
   }
 
