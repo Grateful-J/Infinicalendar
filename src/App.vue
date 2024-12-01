@@ -53,7 +53,7 @@
         </div>
       </div>
     </div>
-    <GreetingPopup />
+    <GreetingPopup v-show="showGreetingPopup" />
   </div>
 </template>
 
@@ -79,6 +79,8 @@ interface Door {
 const openedDoors = ref<Door[]>([]);
 
 const snakeyDon = ref(false);
+
+const showGreetingPopup = ref(false);
 
 // Session storage for openedDoors
 const sessionStorageKey = sessionStorage.getItem("openedDoors") || "[]";
@@ -194,6 +196,10 @@ const generateSnowflakes = () => {
 
 onMounted(() => {
   generateSnowflakes();
+
+  if (openedDoors.value.length < 1) {
+    showGreetingPopup.value = true;
+  }
   sessionStorage.setItem("openedDoors", JSON.stringify(openedDoors.value));
   console.log("openedDoors", openedDoors.value);
 });
